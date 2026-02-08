@@ -1,3 +1,6 @@
+/// See `docs/DB_NOTES.md` for TMDb rule compliance, high-level design
+/// decisions, and relationship explanations.
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -44,6 +47,7 @@ model Movie {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  lastRefreshedAt DateTime @default(now()) @map("last_refreshed_at")
 
   @@map("movies")
 }
@@ -52,6 +56,10 @@ model Genre {
   id     Int          @id @default(autoincrement())
   name   String       @unique
   movies MovieGenre[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  lastRefreshedAt DateTime @default(now()) @map("last_refreshed_at")
 
   @@map("genres")
 }
@@ -75,6 +83,10 @@ model Person {
   casts MovieCast[]
   crews MovieCrew[]
 
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  lastRefreshedAt DateTime @default(now()) @map("last_refreshed_at")
+
   @@map("people")
 }
 
@@ -83,6 +95,8 @@ model MovieCast {
   personId  Int    @map("person_id")
   character String
   order     Int    @default(0)
+
+  lastRefreshedAt DateTime @default(now()) @map("last_refreshed_at")
 
   movie  Movie  @relation(fields: [movieId], references: [id], onDelete: Cascade)
   person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
@@ -95,6 +109,8 @@ model MovieCrew {
   movieId  Int    @map("movie_id")
   personId Int    @map("person_id")
   job      String
+
+  lastRefreshedAt DateTime @default(now()) @map("last_refreshed_at")
 
   movie  Movie  @relation(fields: [movieId], references: [id], onDelete: Cascade)
   person Person @relation(fields: [personId], references: [id], onDelete: Cascade)
@@ -114,6 +130,7 @@ model Rating {
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  lastRefreshedAt DateTime @default(now()) @map("last_refreshed_at")
 
   movie Movie @relation(fields: [movieId], references: [id], onDelete: Cascade)
 
